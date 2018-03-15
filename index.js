@@ -68,6 +68,9 @@ getList(url, jsonFilePath)
     })
     .then((data) => {
         spinner.succeed(`抓取成功，使用Gitbook看一下吧`);
+        console.log(`
+        进入${docPath}，执行gitbook serve看结果
+        `)
     })
     .catch((e) => {
         spinner.fail(`fail!`);
