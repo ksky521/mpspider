@@ -9,7 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "commander": "^2.15.0",
     "fs-extra": "^5.0.0",
+    "ora": "^2.0.0",
     "pinyin": "^2.8.3",
     "spider": "git+ssh://git@github.com/ksky521/spider.git",
     "turndown": "^4.0.1"

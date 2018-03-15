@@ -1,38 +1,57 @@
 const fs = require('fs-extra');
 const Queue = require('./lib/Queue');
 const getMdArticle = require('./lib/getMdArticle');
-const items = fs.readJSONSync('./.cache/all.json');
 const getRelateArticle = require('./lib/getRelateArticle');
 const path = require('path');
-
-const cwd = process.cwd();
-const _cachePath = path.join(cwd, '.cache');
-const filepath = path.join(cwd, 'docs');
 const unique = new Set();
 
-items.forEach((item) => {
-    item.links = getRelateArticle(item);
-    unique.add(item.mid);
-});
+function self(items, jsonFilePath) {
+    // const items = fs.readJSONSync('./.cache/all.json');
+    return new Promise((resolve, reject) => {
+        if (!Array.isArray(items)) {
+            reject('items is not an Array');
+        }
+        _self(items, jsonFilePath);
+        function _self(items, jsonFilePath) {
+            items.forEach((item) => {
+                item.links = getRelateArticle(item);
+                unique.add(item.mid);
+            });
 
-const relates = [];
-items.forEach(({links}) => {
-    if (links && links.length) {
-        links.forEach((link) => {
-            if (!unique.has(link.mid)) {
-                relates.push(link);
+            const relates = [];
+            items.forEach(({links}) => {
+                if (links && links.length) {
+                    links.forEach((link) => {
+                        if (!unique.has(link.mid)) {
+                            relates.push(link);
+                        }
+                    });
+                }
+            });
+
+            if (relates.length !== 0) {
+                const queue = new Queue(getMdArticle, 2);
+                relates.forEach(({url, mid, title}, i) => {
+                    queue.add([mid, url]);
+                });
+                queue.run().then(
+                    (data) => {
+                        let newData = data.concat(items);
+                        if (jsonFilePath) {
+                            fs.writeJSONSync(jsonFilePath, newData);
+                        }
+                        //递归执行
+                        _self(newData, jsonFilePath);
+                    },
+                    (e) => {
+                        reject(e);
+                    }
+                );
+            } else {
+                resolve(items);
             }
-        });
-    }
-});
+        }
+    });
+}
 
-const queue = new Queue(getMdArticle, 2);
-relates.forEach(({url, mid, title}, i) => {
-    queue.add([mid, url]);
-});
-queue.run().then((data) => {
-    let newData = data.concat(items);
-    fs.writeJSONSync(path.join(_cachePath, 'all.json'), newData);
-});
-
-console.log(relates);
+module.exports = self;
