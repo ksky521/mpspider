@@ -1,9 +1,14 @@
-const program = require('commander');
-const ora = require('ora');
+
+const path = require('path');
 const crypto = require('crypto');
 const md5 = crypto.createHash('md5');
 
-const path = require('path');
+const fs = require('fs-extra');
+const program = require('commander');
+const ora = require('ora');
+
+const cwd = process.cwd();
+
 program.usage('[options] <url>').option('-p, --path <value>', '输出路径').parse(process.argv);
 
 let docPath = program.path;
@@ -12,13 +17,18 @@ if (!url) {
     console.log('url is empty');
     return;
 }
-const cwd = process.cwd();
 
-if (docPath) {
+if (!docPath) {
     docPath = path.join(cwd, 'docs');
 }
-const cachePath = path.join(cwd, '.cache');
+
+const cachePath = path.join(docPath, '.cache');
 const imgPath = path.join(docPath, 'imgs');
+
+//创建文件夹
+fs.ensureDirSync(imgPath);
+fs.ensureDirSync(cachePath);
+
 const imgRelatePath = './imgs';
 
 const cacheName = md5.update(url).digest('hex');
@@ -32,31 +42,27 @@ const unfetchMids = require('./unfetchMids');
 
 // const url = 'https://mp.weixin.qq.com/s/CIPosICgva9haqstMDIHag';
 
-let spinner = ora('Loading').start();
+let spinner = ora('开始抓取聚合页内容').start();
 
-spinner.text = `开始抓取聚合页内容`;
 
 getList(url, jsonFilePath)
     .then((data) => {
         spinner.succeed(`抓取聚合页内容成功，共找到 ${data.length} 篇文章`);
 
-        spinner = ora('Loading').start();
-        spinner.text = `开始抓取内容关联文章`;
+        spinner = ora('开始抓取内容关联文章').start();
         return unfetchMids(data, jsonFilePath);
     })
     .then((data) => {
         spinner.succeed(`抓取内容关联文章成功，共找到 ${data.length} 篇文章`);
 
-        spinner = ora('Loading').start();
-        spinner.text = `开始抓取图片`;
+        spinner = ora('开始抓取图片').start();
 
         return getImages(data, imgPath, imgRelatePath, jsonFileWithImagePath);
     })
     .then((data) => {
         spinner.succeed(`抓取图片成功`);
 
-        spinner = ora('Loading').start();
-        spinner.text = `开始生成Gitbook文档`;
+        spinner = ora('开始生成Gitbook文档').start();
 
         return createBook(data, docPath);
     })

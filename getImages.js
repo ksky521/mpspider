@@ -27,7 +27,9 @@ function self(items, imgPath, imgRelatePath = './imgs', jsonPath = '') {
         queue.run().then(
             (data) => {
                 data.forEach((d) => {
-                    rs[d.url] = d.name;
+                    if (d && d.url && d.name) {
+                        rs[d.url] = d.name;
+                    }
                 });
                 items.forEach((item) => {
                     let content = item.content.replace(/!\[\]\((.+?)\)/g, (input, $1) => {

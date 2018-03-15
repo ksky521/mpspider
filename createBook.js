@@ -6,7 +6,7 @@ const path = require('path');
 const pinyin = require('pinyin');
 
 function self(items, docPath) {
-    new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
         if (!Array.isArray(items)) {
             reject('items is not an Array');
         }
