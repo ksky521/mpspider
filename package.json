@@ -1,0 +1,17 @@
+{
+  "name": "mp-spider",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fs-extra": "^5.0.0",
+    "pinyin": "^2.8.3",
+    "spider": "git+ssh://git@github.com/ksky521/spider.git",
+    "turndown": "^4.0.1"
+  }
+}
