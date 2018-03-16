@@ -1,47 +1,77 @@
-## 公众号文章抓取生成mobi
+# 公众号文章抓取&生成kindle电子书
 
-自己写的从「公众号汇总文章」开始，抓取公众号好文章，生成kindle可用的文件，项目借github存储下。
-
-1. 配置index.js选择一篇汇总性文章，使用node抓取公众号文章
-2. 抓取相关外链的文章
-3. 重复2，直到没有
-4. 抓取文章配图
-5. 生成gitbook项目
-6. 通过gitbook生成mobi
+抓取公众号历史文章，解析成markdown文件，生成gitbook项目，最后可生成kindle书籍。
 
 **PS**：
 1. 需要ebook-convert依赖
 2. gitbook需要在node 6.x版本，8.x不能用，其他没测试
 3. 生成mobi需要配置下`book.json`
 
+## 抓取方式
 
-使用「架构师之路」公众号文章做demo
+支持两种抓取方式：
+1. 从公众号的一篇汇总文章开始，有些公众号会有年度总结文章，比如 [这篇文章](https://mp.weixin.qq.com/s/CIPosICgva9haqstMDIHag)
+2. 使用anyproxy做代理，抓取公众号历史消息文章，忽略非图文类、小标题类文章
 
 **PS**：汇总文章指的是一个公众号的文章页面，比如「架构师之路」的 [这篇文章](https://mp.weixin.qq.com/s/CIPosICgva9haqstMDIHag)
 
-## 如何运行
+## 流程介绍
 
-### 安装配置anyproxy
+1. 抓取文章
+2. 解析文章内链的外链「公众号文章」
+3. 继续抓取外链文章
+4. 替换外链文章到本地相对地址
+4. 抓取文章内的图片
+5. 替换文章图片到本地相对地址
+6. 生成gitbook项目
+7. 使用gitbook+ebook-convert生成kindle文件
+
+1~6步是全自动的，7是看自己情况
+## 安装
+
 ```bash
-npm i anyproxy -g
+npm i mpspider -g
 ```
+
+### 执行方式
+
+```bash
+# 第一种方式
+mpspider url https://mp.weixin.qq.com/s/CIPosICgva9haqstMDIHag -d dest_path
+# 第二种方式，需要手动配置代理，点击公众号「查看历史文章」，详见下面介绍
+mpspider proxy -d dest_path -p proxy_port
+```
+抓取后，会在`dest_path`创建gitbook项目
+
+### 生成电子书
+
+执行命令
+
+```bash
+# 进入抓取后gitbook的地址
+cd dest_path
+# 创建readme.md，gitbook不创建会报错
+touch README.md
+# 有必要可以创建book.json，参考gitbook文档
+gitbook serve
+# 访问地址查看效果
+# -------
+# 生成电子书
+gitbook mobi ./ name.mobi
+
+```
+
+## 如何配置anyproxy代理抓取https页面
+
+### 配置anyproxy https证书
+参考：http://anyproxy.io/cn/#%E8%AF%81%E4%B9%A6%E9%85%8D%E7%BD%AE
+
+
 ### 启动anyproxy
 ```bash
  anyproxy --rule lib/anyproxyRule.js
 ```
 
-### 抓取
-
-```
-node index.js mp_url -p doc_path
-
-cd doc_path
-touch README.md
-touch book.json
-gitbook serve
-
-gitbook mobi ./ shenjian.mobi
-```
 
 ## 二次开发
 
@@ -49,12 +79,24 @@ git clone源码后，进入文件夹，执行`npm i`
 
 * index.js 入口文件，使用`commander`和`ora`进行命令处理
 * getList.js 根据汇总文件提取文章列表
+* proxySpider.js 根据anyproxy代理方式抓取
+* dealMPList.js 根据代理抓取使用的文件
 * unfetchMids.js 提取文章列表中内链的文章
 * getImages.js 抓取文章中的图片地址，并且替换为本地地址
 * createBook.js 生成gitbook markdown文件和`summary.md`，替换内链的文内容
 
-## 依赖
+## 电子书依赖
 
 * ebook-convert：`brew install caskroom/cask/calibre`
 * gitbook：`npm i gitbook-cli -g`
+
+
+## kindle效果截图
+
+![目录列表](./screen_capture/1.jpeg)
+
+![带图文章](./screen_capture/2.jpeg)
+
+![普通文章](./screen_capture/3.jpeg)
+
 
