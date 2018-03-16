@@ -21,6 +21,17 @@
 
 ## 如何运行
 
+### 安装配置anyproxy
+```bash
+npm i anyproxy -g
+```
+### 启动anyproxy
+```bash
+ anyproxy --rule lib/anyproxyRule.js
+```
+
+### 抓取
+
 ```
 node index.js mp_url -p doc_path
 

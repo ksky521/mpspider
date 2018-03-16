@@ -16,7 +16,7 @@ function self(items, docPath) {
         items.forEach((item) => {
             let title = item.title;
             title = [].concat(...pinyin(title, {style: pinyin.STYLE_NORMAL})).join('_');
-            title = title.replace(/\//g, '_').replace(/[\(\)\"\'“‘「」\[\]]/g, '');
+            title = title.replace(/\//g, '_').replace(/[\(\)\"\'“‘「」\[\]]/g, '').replace(/\s+/g, '-');
             let release = (item.release = `./${title}.md`);
             item.uri = path.join(docPath, release);
             map.set(item.mid, release);
