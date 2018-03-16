@@ -6,6 +6,11 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
     },
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/ksky521/mpspider"
+    },
+
     "author": {
         "name": "Theo Wang",
         "email": "ksky521@gmail.com"
