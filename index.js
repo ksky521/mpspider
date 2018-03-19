@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const path = require('path');
 const crypto = require('crypto');
 const md5 = crypto.createHash('md5');
@@ -157,3 +159,9 @@ program.command('proxy').option('-d, --dest <value>', '输出路径').option('-p
         });
 });
 program.parse(process.argv);
+
+
+if (!program.args[0]) {
+    process.stdout.write(program.helpInformation());
+    program.emit('--help');
+}
