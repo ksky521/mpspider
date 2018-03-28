@@ -37,7 +37,7 @@ npm i mpspider -g
 
 ```bash
 # 第一种方式
-mpspider url https://mp.weixin.qq.com/s/CIPosICgva9haqstMDIHag -d dest_path
+mpspider article https://mp.weixin.qq.com/s/CIPosICgva9haqstMDIHag -d dest_path
 # 第二种方式，需要手动配置代理，点击公众号「查看历史文章」，详见下面介绍
 mpspider proxy -d dest_path -p proxy_port
 ```
