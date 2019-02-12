@@ -8,7 +8,7 @@
 /npm-debug.log
 /output
 /publish
-
+package-lock.json
 *.mobi
 
 ### Node ###
