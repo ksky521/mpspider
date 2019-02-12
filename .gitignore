@@ -4,6 +4,8 @@
 /.idea
 /.vscode
 
+list.txt
+
 .cache
 /npm-debug.log
 /output
