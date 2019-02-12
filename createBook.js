@@ -16,8 +16,9 @@ function self(items, docPath) {
             title = [].concat(...pinyin(title, {style: pinyin.STYLE_NORMAL})).join('_');
             title = title
                 .replace(/\//g, '_')
-                .replace(/[\(\)\"\'“‘「」\[\]]/g, '')
-                .replace(/\s+/g, '-');
+                .replace(/[\(\)\"\'“”‘，「」【】？。；;&\[\]]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/^[-_]+|[-_]+$/g, '');
             let release = (item.release = `./${title}.md`);
             item.uri = path.join(docPath, release);
             map.set(item.mid, release);
@@ -41,10 +42,10 @@ function self(items, docPath) {
             });
 
             item.content = `
-    # ${item.title.trim()}
-    
-    ${content}
-    `;
+# ${item.title.trim()}
+
+${content}
+`;
 
             data.push(item);
         });

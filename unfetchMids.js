@@ -13,7 +13,7 @@ function self(items, jsonFilePath) {
         _self(items, jsonFilePath);
         function _self(items, jsonFilePath) {
             items.forEach(item => {
-                if (item && !unique.has(item.mid)) {
+                if (item && item.mid && !unique.has(item.mid)) {
                     item.links = getRelateArticle(item);
                     unique.add(item.mid);
                 }
@@ -23,7 +23,7 @@ function self(items, jsonFilePath) {
             items.forEach(({links}) => {
                 if (links && links.length) {
                     links.forEach(link => {
-                        if (!unique.has(link.mid)) {
+                        if (link.mid && !unique.has(link.mid)) {
                             relates.push(link);
                         }
                     });
@@ -53,6 +53,20 @@ function self(items, jsonFilePath) {
                     }
                 );
             } else {
+                // 过滤一遍
+                let latestUni = new Set();
+                let len = items.length;
+                items = items.filter(({mid, title}) => {
+                    if (!latestUni.has(mid)) {
+                        latestUni.add(mid);
+                        return true;
+                    } else {
+                        return false;
+                    }
+                });
+                if (len !== items.length && jsonFilePath) {
+                    fs.writeJSONSync(jsonFilePath, items);
+                }
                 resolve(items);
             }
         }

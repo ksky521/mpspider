@@ -2,8 +2,6 @@ const fs = require('fs-extra');
 const Queue = require('./lib/Queue');
 const getImg = require('./lib/getImg');
 
-const getRelateArticle = require('./lib/getRelateArticle');
-const path = require('path');
 
 function self(items, imgPath, imgRelatePath = './imgs', jsonPath = '') {
     return new Promise((resolve, reject) => {
