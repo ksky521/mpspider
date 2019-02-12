@@ -2,7 +2,6 @@ const spider = require('spider');
 const Queue = require('./lib/Queue');
 const getMidFromUrl = require('./lib/getMidFromUrl');
 const getMdArticle = require('./lib/getMdArticle');
-const path = require('path');
 const fs = require('fs-extra');
 
 function self(url, jsonFilePath) {
@@ -20,7 +19,10 @@ function self(url, jsonFilePath) {
                     items.forEach(({url, mid, title}, i) => {
                         queue.add([mid, url]);
                     });
-                    queue.run().then((data) => {
+                    queue.run().then(data => {
+                        data = data.filter(item => {
+                            return item && item.content;
+                        });
                         fs.writeJSONSync(jsonFilePath, data);
                         resolve(data);
                     });
@@ -38,7 +40,7 @@ function self(url, jsonFilePath) {
                         return {
                             mid: getMidFromUrl(url),
                             url,
-                            title: dom.text()
+                            title: dom.text().trim()
                         };
                     }
                 }

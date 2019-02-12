@@ -1,6 +1,6 @@
 {
     "name": "mpspider",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Wechat Spider，公众号文章抓取&生成kindle电子书",
     "main": "index.js",
     "scripts": {
@@ -10,7 +10,6 @@
         "type": "git",
         "url": "git://github.com/ksky521/mpspider"
     },
-
     "author": {
         "name": "Theo Wang",
         "email": "ksky521@gmail.com"
@@ -18,7 +17,15 @@
     "bin": {
         "mpspider": "index.js"
     },
-    "keywords": ["wechat spider", "wechat", "spider", "kindle", "mobi", "gitbook", "markdown"],
+    "keywords": [
+        "wechat spider",
+        "wechat",
+        "spider",
+        "kindle",
+        "mobi",
+        "gitbook",
+        "markdown"
+    ],
     "license": "GPL",
     "dependencies": {
         "anyproxy": "^4.0.6",
@@ -27,6 +34,6 @@
         "ora": "^2.0.0",
         "pinyin": "^2.8.3",
         "spider": "git+ssh://git@github.com/ksky521/spider.git",
-        "turndown": "^4.0.1"
+        "turndown": "^5.0.3"
     }
 }

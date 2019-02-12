@@ -26,7 +26,7 @@ function self(data, cachePath, jsonFilePath) {
         const queue = new Queue(getMdArticle, 2);
 
         // let count = 0;
-        content.forEach((item) => {
+        content.forEach(item => {
             try {
                 item = item.trim();
                 if (item.length < 10) {
@@ -35,7 +35,7 @@ function self(data, cachePath, jsonFilePath) {
                 let json = JSON.parse(item);
                 let data = Array.isArray(json.list) ? json.list : json;
                 if (Array.isArray(data)) {
-                    data.forEach((j) => {
+                    data.forEach(j => {
                         let info = j.app_msg_ext_info;
                         if (!info) {
                             return;
@@ -58,8 +58,8 @@ function self(data, cachePath, jsonFilePath) {
         });
 
         queue.run().then(
-            (data) => {
-                data = data.filter((item) => {
+            data => {
+                data = data.filter(item => {
                     return item && item.content;
                 });
                 if (jsonFilePath) {
@@ -68,7 +68,7 @@ function self(data, cachePath, jsonFilePath) {
 
                 resolve(data);
             },
-            (e) => {
+            e => {
                 reject(e);
             }
         );

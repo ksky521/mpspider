@@ -12,7 +12,7 @@ function self(items, imgPath, imgRelatePath = './imgs', jsonPath = '') {
         }
 
         let rs = [];
-        items.forEach((item) => {
+        items.forEach(item => {
             item.content.replace(/!\[\]\((.+?)\)/g, (input, $1) => {
                 rs.push($1);
             });
@@ -25,13 +25,16 @@ function self(items, imgPath, imgRelatePath = './imgs', jsonPath = '') {
 
         rs = {};
         queue.run().then(
-            (data) => {
-                data.forEach((d) => {
+            data => {
+                data = data.filter(item => {
+                    return item && item.content;
+                });
+                data.forEach(d => {
                     if (d && d.url && d.name) {
                         rs[d.url] = d.name;
                     }
                 });
-                items.forEach((item) => {
+                items.forEach(item => {
                     let content = item.content.replace(/!\[\]\((.+?)\)/g, (input, $1) => {
                         if (rs[$1]) {
                             return `![](${imgRelatePath}/${rs[$1]})`;
@@ -47,7 +50,7 @@ function self(items, imgPath, imgRelatePath = './imgs', jsonPath = '') {
                 }
                 resolve(items, rs.length);
             },
-            (e) => {
+            e => {
                 reject(e);
             }
         );

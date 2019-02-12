@@ -69,7 +69,7 @@ gitbook mobi ./ name.mobi
 
 ### 启动anyproxy
 ```bash
- anyproxy --rule lib/anyproxyRule.js
+anyproxy --rule lib/anyproxyRule.js
 ```
 
 

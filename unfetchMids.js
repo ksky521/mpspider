@@ -2,7 +2,6 @@ const fs = require('fs-extra');
 const Queue = require('./lib/Queue');
 const getMdArticle = require('./lib/getMdArticle');
 const getRelateArticle = require('./lib/getRelateArticle');
-const path = require('path');
 const unique = new Set();
 
 function self(items, jsonFilePath) {
@@ -13,15 +12,17 @@ function self(items, jsonFilePath) {
         }
         _self(items, jsonFilePath);
         function _self(items, jsonFilePath) {
-            items.forEach((item) => {
-                item.links = getRelateArticle(item);
-                unique.add(item.mid);
+            items.forEach(item => {
+                if (item && !unique.has(item.mid)) {
+                    item.links = getRelateArticle(item);
+                    unique.add(item.mid);
+                }
             });
 
             const relates = [];
             items.forEach(({links}) => {
                 if (links && links.length) {
-                    links.forEach((link) => {
+                    links.forEach(link => {
                         if (!unique.has(link.mid)) {
                             relates.push(link);
                         }
@@ -35,7 +36,11 @@ function self(items, jsonFilePath) {
                     queue.add([mid, url]);
                 });
                 queue.run().then(
-                    (data) => {
+                    data => {
+                        data = data.filter(item => {
+                            return item && item.content;
+                        });
+
                         let newData = data.concat(items);
                         if (jsonFilePath) {
                             fs.writeJSONSync(jsonFilePath, newData);
@@ -43,7 +48,7 @@ function self(items, jsonFilePath) {
                         //递归执行
                         _self(newData, jsonFilePath);
                     },
-                    (e) => {
+                    e => {
                         reject(e);
                     }
                 );
