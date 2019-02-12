@@ -172,10 +172,9 @@ function completeMessage(pwd) {
     /* eslint-disable*/
     console.log(
         chalk.green(`
-        ┌─────────────────────────────${`─`.repeat(pwd.length)}──┐
-        │    进入目录: ${chalk.yellow('cd ' + pwd)}     ${` `.repeat(pwd.length)}│
-        │    查看结果: ${chalk.yellow('gitbook serve')}    ${` `.repeat(pwd.length )}│
-        └─────────────────────────────${`─`.repeat(pwd.length)}──┘`)
+    进入目录: ${chalk.yellow('cd ' + pwd)}
+    查看结果: ${chalk.yellow('gitbook serve')}
+`)
     );
     /* eslint-enable*/
 }

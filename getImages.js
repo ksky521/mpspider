@@ -24,9 +24,6 @@ function self(items, imgPath, imgRelatePath = './imgs', jsonPath = '') {
         rs = {};
         queue.run().then(
             data => {
-                data = data.filter(item => {
-                    return item && item.content;
-                });
                 data.forEach(d => {
                     if (d && d.url && d.name) {
                         rs[d.url] = d.name;
