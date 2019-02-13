@@ -15,6 +15,7 @@ list.txt
 /publish
 package-lock.json
 *.mobi
+mpspider.config.js
 
 ### Node ###
 # Logs
