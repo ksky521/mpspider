@@ -64,6 +64,10 @@ function self(items, jsonFilePath, options) {
                         return false;
                     }
                 });
+                if (options && options.filter && typeof options.filter === 'function') {
+                    const filter = options.filter;
+                    items = items.filter(filter);
+                }
                 if (len !== items.length && jsonFilePath) {
                     fs.writeJSONSync(jsonFilePath, items);
                 }

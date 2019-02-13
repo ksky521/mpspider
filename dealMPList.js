@@ -1,6 +1,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const URL = require('url');
+const chalk = require('chalk');
 const Queue = require('./lib/Queue');
 const getMdArticle = require('./lib/getMdArticle');
 
@@ -25,7 +26,7 @@ function self(data, cachePath, jsonFilePath, options) {
         let rs = [];
         const queue = new Queue(getMdArticle, 2);
 
-        // let count = 0;
+        let count = 0;
         content.forEach(item => {
             try {
                 item = item.trim();
@@ -34,9 +35,18 @@ function self(data, cachePath, jsonFilePath, options) {
                 }
                 let json = JSON.parse(item);
                 let data = Array.isArray(json.list) ? json.list : json;
+                count += data.length;
                 if (Array.isArray(data)) {
                     data.forEach(j => {
+                        if (options && options.listFilter && typeof options.listFilter === 'function') {
+                            const filter = options.listFilter;
+                            // 如果返回是 undefined、false 等，则过滤
+                            if (!filter(j)) {
+                                return;
+                            }
+                        }
                         let info = j.app_msg_ext_info;
+
                         if (!info) {
                             return;
                         }
@@ -56,7 +66,11 @@ function self(data, cachePath, jsonFilePath, options) {
                 console.log(e);
             }
         });
-
+        if (options && options.listFilter && typeof options.listFilter === 'function') {
+            console.log(
+                `\n共获取了 ${chalk.yellow.bold(count)} 篇文章，过滤后为 ${chalk.yellow.bold(queue.getLength())} 篇`
+            );
+        }
         queue.run().then(
             data => {
                 data = data.filter(item => {

@@ -137,7 +137,7 @@ program
                 return unfetchMids(data, jsonFilePath, options);
             })
             .then(data => {
-                spinner.succeed(`抓取内容关联文章成功，共找到 ${chalk.yellow.bold(data.length)} 篇文章`);
+                spinner.succeed(`抓取内容关联文章成功，去重后得到 ${chalk.yellow.bold(data.length)} 篇文章`);
 
                 spinner = ora('开始抓取图片').start();
 

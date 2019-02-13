@@ -41,7 +41,7 @@ npm i mpspider -g
 ```bash
 # 第一种方式
 mpspider article https://mp.weixin.qq.com/s/CIPosICgva9haqstMDIHag -d dest_path
-# 第二种方式，需要手动配置代理，点击公众号「查看历史文章」，详见下面介绍
+# 第二种方式，需要手动配置代理，点击公众号「查看历史文章」，详见下面介绍，支持手机微信和 pc 微信列表
 mpspider proxy -d dest_path -p proxy_port
 ```
 
@@ -81,14 +81,26 @@ anyproxy --rule lib/anyproxyRule.js
 
 支持配置项：
 
+-   book.json 配置项：'author', 'title', 'description'
+-   summarySort：文章排序函数，方法等同 `Array.sort`写法，传入`item`对象，有`mid`、`title`、`content`、`release`、`uri`等选项，release 是拼音文件名，**默认根据 release 排序**
+-   `filter`：文章内容过滤函数，将文章列表数组`items`通过 `items.filter(option.filter)` 过滤一遍，item 内容包括：`mid`、`title`、`content`
+-   `listFilter`：列表文章过滤，只用在 proxy 模式下，根据文章列表的 json 对象过滤数据，常用对象字段为
+    -   app_msg_ext_info：`author`、`title`、`copyright_stat`、`content_url`、`source_url`、`digest`、`content`、`cover`、`is_multi`等
+    -   comm_msg_info：`datetime`发布时间戳
 -   `turndown`：支持`keep`、`remove`、`rule`、`plugins` 四个选项，分别对应 turndown 的四个配置项
 -   `afterConverter`：turndown 将 html 转为 markdown 内容之后，将`content`字符串传入该函数，处理结束后，`return`处理后的字符串
 
 示例：
 
 ```js
-const turndownPluginGfm = require('turndown-plugin-gfm')
+const turndownPluginGfm = require('turndown-plugin-gfm');
 module.exports = {
+    filter: item => {
+        if (item.title.indexOf('广告') !== -1) {
+            return false;
+        }
+        return true;
+    },
     turndown: {
         keep: 'span',
         remove: 'span',

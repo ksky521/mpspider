@@ -1,0 +1,24 @@
+{
+    "author": "三水清",
+    "description": "这是使用 mpspider 收集了微信公众号内容收集起来的小书",
+    "extension": null,
+    "generator": "mpspider",
+    "title": "MPSpider生成的小书",
+    "plugins": ["autocover"],
+    "pluginsConfig": {
+        "autocover": {
+            "font": {
+                "size": null,
+                "family": "Impact",
+                "color": "#FFF"
+            },
+            "size": {
+                "w": 1800,
+                "h": 2360
+            },
+            "background": {
+                "color": "#09F"
+            }
+        }
+    }
+}

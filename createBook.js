@@ -3,7 +3,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const pinyin = require('pinyin');
 
-function self(items, docPath) {
+function self(items, docPath, options = {}) {
     return new Promise((resolve, reject) => {
         if (!Array.isArray(items)) {
             reject('items is not an Array');
@@ -52,6 +52,17 @@ ${content}
 
         // 3. 生成文章md
         let summary = [];
+        if (options && options.summarySort && typeof options.summarySort === 'function') {
+            const sort = options.summarySort;
+            data = data.sort(sort);
+        } else {
+            data = data.sort((f, s) => {
+                if (f.release > s.release) {
+                    return 1;
+                }
+                return -1;
+            });
+        }
         data.forEach(item => {
             summary.push(`* [${item.title.trim()}](${item.release.trim()})`);
             fs.writeFileSync(item.uri, item.content);
@@ -67,6 +78,16 @@ ${content}
 * 广告：[nodeppt](https://www.npmjs.com/package/nodeppt) 用 markdown 写出高大上的网页 ppt
 `
         );
+        // 生成 book.json
+        const defaultJson = require('./book.default.json');
+        if (options) {
+            ['author', 'title', 'description'].forEach(i => {
+                if (options[i]) {
+                    defaultJson[i] = options[i];
+                }
+            });
+        }
+        fs.writeFileSync(path.join(docPath, './book.json'), JSON.stringify(defaultJson, null, 4));
         resolve();
     });
 }
