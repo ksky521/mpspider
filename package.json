@@ -1,6 +1,6 @@
 {
     "name": "mpspider",
-    "version": "1.0.2",
+    "version": "1.1.0",
     "description": "Wechat Spider，公众号文章抓取&生成kindle电子书",
     "main": "index.js",
     "scripts": {
