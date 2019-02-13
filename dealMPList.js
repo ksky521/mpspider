@@ -5,7 +5,7 @@ const chalk = require('chalk');
 const Queue = require('./lib/Queue');
 const getMdArticle = require('./lib/getMdArticle');
 
-function self(data, cachePath, jsonFilePath, options) {
+function self(data, cachePath, jsonFilePath, spinner, options) {
     return new Promise((resolve, reject) => {
         if (!data.nickname) {
             return reject('没有公众号名称');
@@ -71,6 +71,9 @@ function self(data, cachePath, jsonFilePath, options) {
                 `\n共获取了 ${chalk.yellow.bold(count)} 篇文章，过滤后为 ${chalk.yellow.bold(queue.getLength())} 篇`
             );
         }
+        queue.on('progress', (curLength, total) => {
+            spinner.text = `开始解析文章列表，进度 ${chalk.yellow.bold(curLength)}/${chalk.green.bold(total)}`;
+        });
         queue.run().then(
             data => {
                 data = data.filter(item => {

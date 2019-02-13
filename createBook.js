@@ -24,7 +24,7 @@ function self(items, docPath, options = {}) {
             map.set(item.mid, release);
         });
 
-        const data = [];
+        let data = [];
         // 2. 替换文章中的文章链接
         items.forEach(item => {
             if (unique.has(item.mid) && item.content.length < 100) {

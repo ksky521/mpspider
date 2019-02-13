@@ -124,11 +124,11 @@ program
                 spinner = ora('提取中...请勿微信关闭页面！\n').start();
             });
 
-        anyproxySpider(event, cachePath, port, options)
+        anyproxySpider(event, cachePath, port, spinner, options)
             .then(data => {
                 spinner.succeed(`抓取「${chalk.yellow.bold(data.nickname)}」文章列表结束`);
                 spinner = ora('开始解析文章列表').start();
-                return dealMPList(data, cachePath, jsonFilePath, options);
+                return dealMPList(data, cachePath, jsonFilePath, spinner, options);
             })
             .then(data => {
                 spinner.succeed(`抓取聚合页内容成功，共找到 ${chalk.yellow.bold(data.length)} 篇文章`);
