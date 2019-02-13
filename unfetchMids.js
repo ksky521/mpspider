@@ -4,7 +4,7 @@ const getMdArticle = require('./lib/getMdArticle');
 const getRelateArticle = require('./lib/getRelateArticle');
 const unique = new Set();
 
-function self(items, jsonFilePath) {
+function self(items, jsonFilePath, options) {
     // const items = fs.readJSONSync('./.cache/all.json');
     return new Promise((resolve, reject) => {
         if (!Array.isArray(items)) {
@@ -33,7 +33,7 @@ function self(items, jsonFilePath) {
             if (relates.length !== 0) {
                 const queue = new Queue(getMdArticle, 2);
                 relates.forEach(({url, mid, title}, i) => {
-                    queue.add([mid, url]);
+                    queue.add([mid, url, options]);
                 });
                 queue.run().then(
                     data => {

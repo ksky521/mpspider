@@ -4,7 +4,7 @@ const URL = require('url');
 const Queue = require('./lib/Queue');
 const getMdArticle = require('./lib/getMdArticle');
 
-function self(data, cachePath, jsonFilePath) {
+function self(data, cachePath, jsonFilePath, options) {
     return new Promise((resolve, reject) => {
         if (!data.nickname) {
             return reject('没有公众号名称');
@@ -49,7 +49,7 @@ function self(data, cachePath, jsonFilePath) {
                         //     return;
                         // }
                         // console.log(url);
-                        queue.add([mid, url]);
+                        queue.add([mid, url, options]);
                     });
                 }
             } catch (e) {

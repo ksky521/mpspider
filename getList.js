@@ -4,7 +4,7 @@ const getMidFromUrl = require('./lib/getMidFromUrl');
 const getMdArticle = require('./lib/getMdArticle');
 const fs = require('fs-extra');
 
-function self(url, jsonFilePath) {
+function self(url, jsonFilePath, options) {
     return new Promise((resolve, reject) => {
         if (!url) {
             reject('url is empty');
@@ -15,9 +15,16 @@ function self(url, jsonFilePath) {
             (err, data) => {
                 if (!err) {
                     let items = data.items;
+                    if (!Array.isArray(items)) {
+                        if (items.mid) {
+                            items = [items];
+                        } else {
+                            reject('getList Error: ' + JSON.stringify(data));
+                        }
+                    }
                     const queue = new Queue(getMdArticle, 2);
                     items.forEach(({url, mid, title}, i) => {
-                        queue.add([mid, url]);
+                        queue.add([mid, url, options]);
                     });
                     queue.run().then(data => {
                         data = data.filter(item => {

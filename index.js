@@ -15,7 +15,8 @@ program
     .option('-d, --dest <value>', '输出路径')
     .action((url, cmd) => {
         let docPath = cmd.dest;
-
+        // 获取 mpspider.config.js
+        const options = getMpSpiderConfigFile();
         if (!docPath) {
             docPath = path.join(cwd, 'docs');
         }
@@ -42,26 +43,26 @@ program
 
         let spinner = ora('开始抓取聚合页内容').start();
 
-        getList(url, jsonFilePath)
+        getList(url, jsonFilePath, options)
             .then(data => {
                 spinner.succeed(`抓取聚合页内容成功，共找到 ${chalk.yellow.bold(data.length)} 篇文章`);
 
                 spinner = ora('开始抓取内容关联文章').start();
-                return unfetchMids(data, jsonFilePath);
+                return unfetchMids(data, jsonFilePath, options);
             })
             .then(data => {
                 spinner.succeed(`抓取内容关联文章成功，共找到 ${chalk.yellow.bold(data.length)} 篇文章`);
 
                 spinner = ora('开始抓取图片').start();
 
-                return getImages(data, imgPath, imgRelatePath, jsonFileWithImagePath);
+                return getImages(data, imgPath, imgRelatePath, jsonFileWithImagePath, options);
             })
             .then(data => {
                 spinner.succeed(`抓取图片成功`);
 
                 spinner = ora('开始生成Gitbook文档').start();
 
-                return createBook(data, docPath);
+                return createBook(data, docPath, options);
             })
             .then(data => {
                 spinner.succeed(`抓取成功，使用Gitbook看一下吧`);
@@ -78,6 +79,8 @@ program
     .option('-d, --dest <value>', '输出路径')
     .option('-p, --port <value>', '代理端口号')
     .action(cmd => {
+        const options = getMpSpiderConfigFile();
+
         let docPath = cmd.dest;
         let port = cmd.port || 8001;
         if (!docPath) {
@@ -121,30 +124,30 @@ program
                 spinner = ora('提取中...请勿微信关闭页面！\n').start();
             });
 
-        anyproxySpider(event, cachePath, port)
+        anyproxySpider(event, cachePath, port, options)
             .then(data => {
                 spinner.succeed(`抓取「${chalk.yellow.bold(data.nickname)}」文章列表结束`);
                 spinner = ora('开始解析文章列表').start();
-                return dealMPList(data, cachePath, jsonFilePath);
+                return dealMPList(data, cachePath, jsonFilePath, options);
             })
             .then(data => {
                 spinner.succeed(`抓取聚合页内容成功，共找到 ${chalk.yellow.bold(data.length)} 篇文章`);
 
                 spinner = ora('开始抓取内容关联文章').start();
-                return unfetchMids(data, jsonFilePath);
+                return unfetchMids(data, jsonFilePath, options);
             })
             .then(data => {
                 spinner.succeed(`抓取内容关联文章成功，共找到 ${chalk.yellow.bold(data.length)} 篇文章`);
 
                 spinner = ora('开始抓取图片').start();
 
-                return getImages(data, imgPath, imgRelatePath, jsonFileWithImagePath);
+                return getImages(data, imgPath, imgRelatePath, jsonFileWithImagePath, options);
             })
             .then(data => {
                 spinner.succeed(`抓取图片成功`);
 
                 spinner = ora('开始生成Gitbook文档').start();
-                return createBook(data, docPath);
+                return createBook(data, docPath, options);
             })
             .then(data => {
                 spinner.succeed(`抓取成功，使用Gitbook看一下吧`);
@@ -177,4 +180,16 @@ function completeMessage(pwd) {
 `)
     );
     /* eslint-enable*/
+}
+
+function getMpSpiderConfigFile() {
+    const p = path.resolve('./mpspider.config.js');
+    if (fs.existsSync(p)) {
+        try {
+            return require(p);
+        } catch (e) {
+            return {};
+        }
+    }
+    return {};
 }
