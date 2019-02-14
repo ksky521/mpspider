@@ -78,9 +78,12 @@ program
     .command('proxy')
     .option('-d, --dest <value>', '输出路径')
     .option('-p, --port <value>', '代理端口号')
+    .option('-V, --verbose', '是否显示 anyproxy log')
+
     .action(cmd => {
         const options = getMpSpiderConfigFile();
-
+        options.anyproxy = options.anyproxy || {};
+        options.anyproxy.silent = !cmd.verbose;
         let docPath = cmd.dest;
         let port = cmd.port || 8001;
         if (!docPath) {
@@ -110,24 +113,45 @@ program
 
         let spinner = ora('启动anyproxy抓取').start();
         const event = new EventEmitter();
+
+        let totalCount = 0;
         event
             .on('anyproxy_ready', port => {
                 spinner.succeed('启动anyproxy成功，手机设置代理后，打开公众号「查看历史文章」');
-                spinner = ora('等待抓取中...\n').start();
+                console.log(`  查看 anyproxy 日志，请访问 ${chalk.yellow.bold('localhost:8002')}`);
+                spinner.start('等待抓取中...');
             })
             .on('anyproxy_home', name => {
                 spinner.succeed('检测到公众号历史文章列表');
-                spinner = ora('提取中...请勿微信关闭页面！\n').start();
+                spinner.start('提取中...请勿微信关闭页面！');
             })
             .on('anyproxy_nickname', name => {
                 spinner.succeed(`公众号名称「${name}」`);
-                spinner = ora('提取中...请勿微信关闭页面！\n').start();
+                spinner.start('提取中...请勿微信关闭页面！');
+            })
+            .on('progress', data => {
+                // 监听页面注入js发出的请求，然后在rule里面拦截请求，发送event事件
+                if (data.curPage) {
+                    spinner.color = 'green';
+                    let count = parseInt(data.count, 10);
+                    if (count && !isNaN(count)) {
+                        totalCount += count;
+                    }
+                    spinner.text = `提取中...请勿微信关闭页面！进度 → 第 ${chalk.yellow.bold(
+                        data.curPage
+                    )} 页，得到 ${chalk.yellow.bold(totalCount)} 条`;
+                }
+            })
+            .on('pageshow', () => {
+                console.log(chalk.red.bold('    又连上了！继续爬！'));
+            })
+            .on('pagehide', () => {
+                console.log(chalk.red.bold('    好像微信关闭或者屏幕不亮了...检查下吧'));
             });
 
-        anyproxySpider(event, cachePath, port, spinner, options)
+        anyproxySpider(event, cachePath, port, options)
             .then(data => {
                 spinner.succeed(`抓取「${chalk.yellow.bold(data.nickname)}」文章列表结束`);
-                spinner = ora('开始解析文章列表').start();
                 return dealMPList(data, cachePath, jsonFilePath, spinner, options);
             })
             .then(data => {

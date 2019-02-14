@@ -1,8 +1,7 @@
 const AnyProxy = require('anyproxy');
-const chalk = require('chalk');
 const anyproxyRule = require('./lib/anyproxyRule.js');
 
-module.exports = (event, cacheFilePath, port = '8001', spinner, options = {}) => {
+module.exports = (event, cacheFilePath, port = 8001, spiderOptions = {}) => {
     return new Promise((resolve, reject) => {
         if (!AnyProxy.utils.certMgr.ifRootCAFileExists()) {
             AnyProxy.utils.certMgr.generateRootCA((error, keyPath) => {
@@ -25,12 +24,7 @@ module.exports = (event, cacheFilePath, port = '8001', spinner, options = {}) =>
             return reject('rootCA');
         }
 
-        // 监听页面注入js发出的请求，然后在rule里面拦截请求，发送event事件
-        event.on('progress', data => {
-            if (data.curPage) {
-                spinner.text = `提取中...请勿微信关闭页面！进度：第 ${chalk.yellow.bold(data.curPage)}`;
-            }
-        });
+        
         // 监听到事件，表明完成列表抓取
         event.on('end', data => {
             resolve(data);
@@ -40,18 +34,21 @@ module.exports = (event, cacheFilePath, port = '8001', spinner, options = {}) =>
         });
         const rule = anyproxyRule(event, cacheFilePath);
 
-        const options = {
-            port: port || 8001,
-            rule: rule,
-            webInterface: {
-                enable: true,
-                webPort: 8002
+        const options = Object.assign(
+            {
+                port: port || 8001,
+                rule: rule,
+                webInterface: {
+                    enable: true,
+                    webPort: 8002
+                },
+                throttle: 10000,
+                forceProxyHttps: false,
+                wsIntercept: false, // 不开启websocket代理
+                silent: true
             },
-            throttle: 10000,
-            forceProxyHttps: false,
-            wsIntercept: false, // 不开启websocket代理
-            silent: false
-        };
+            spiderOptions.anyproxy || {}
+        );
         const proxyServer = new AnyProxy.ProxyServer(options);
         proxyServer.on('ready', e => {
             event.emit('anyproxy_ready', port || 8001);

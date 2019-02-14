@@ -70,6 +70,7 @@ function self(data, cachePath, jsonFilePath, spinner, options) {
             console.log(
                 `\n共获取了 ${chalk.yellow.bold(count)} 篇文章，过滤后为 ${chalk.yellow.bold(queue.getLength())} 篇`
             );
+            spinner.start('开始解析文章列表');
         }
         queue.on('progress', (curLength, total) => {
             spinner.text = `开始解析文章列表，进度 ${chalk.yellow.bold(curLength)}/${chalk.green.bold(total)}`;
