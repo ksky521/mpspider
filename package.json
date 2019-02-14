@@ -33,7 +33,7 @@
         "fs-extra": "^5.0.0",
         "ora": "^2.0.0",
         "pinyin": "^2.8.3",
-        "spider": "git+ssh://git@github.com/ksky521/spider.git",
+        "@ksky521/spider": "0.1.0",
         "turndown": "^5.0.3"
     }
 }

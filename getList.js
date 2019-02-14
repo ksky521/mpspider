@@ -1,4 +1,4 @@
-const spider = require('spider');
+const spider = require('@ksky521/spider');
 const Queue = require('./lib/Queue');
 const getMidFromUrl = require('./lib/getMidFromUrl');
 const getMdArticle = require('./lib/getMdArticle');
