@@ -9,7 +9,11 @@ const fs = require('fs-extra');
 const program = require('commander');
 const ora = require('ora');
 
+const packageJson = require('./package.json');
 const cwd = process.cwd();
+
+program.version(packageJson.version, '-v --version').usage('<command> [options]');
+
 program
     .command('article <url>')
     .option('-d, --dest <value>', '输出路径')
@@ -119,7 +123,9 @@ program
         let totalCount = 0;
         event
             .on('anyproxy_ready', port => {
-                spinner.succeed(`启动代理成功，按照下面方式设置代理，然后打开公众号「${chalk.yellow.bold('查看历史文章')}」`);
+                spinner.succeed(
+                    `启动代理成功，按照下面方式设置代理，然后打开公众号「${chalk.yellow.bold('查看历史文章')}」`
+                );
                 console.log(`  代理ip：${chalk.yellow.bold(address.ip())}，端口号：${chalk.yellow.bold(port)}`);
                 console.log(`  访问 http://localhost:8002，查看代理访问日志`);
                 spinner.start('等待抓取中...');
