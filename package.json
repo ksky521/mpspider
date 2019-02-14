@@ -28,12 +28,13 @@
     ],
     "license": "GPL",
     "dependencies": {
+        "@ksky521/spider": "0.1.0",
         "anyproxy": "^4.0.6",
         "commander": "^2.15.0",
         "fs-extra": "^5.0.0",
         "ora": "^2.0.0",
         "pinyin": "^2.8.3",
-        "@ksky521/spider": "0.1.0",
+        "prettier": "^1.16.4",
         "turndown": "^5.0.3"
     }
 }
