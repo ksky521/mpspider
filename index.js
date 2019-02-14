@@ -103,6 +103,8 @@ program
         const jsonFilePath = path.join(cachePath, `${cacheName}.json`);
         const jsonFileWithImagePath = path.join(cachePath, `${cacheName}-img.json`);
 
+        const address = require('address');
+
         const anyproxySpider = require('./proxySpider');
         const dealMPList = require('./dealMPList');
         const getImages = require('./getImages');
@@ -117,8 +119,9 @@ program
         let totalCount = 0;
         event
             .on('anyproxy_ready', port => {
-                spinner.succeed('启动anyproxy成功，手机设置代理后，打开公众号「查看历史文章」');
-                console.log(`  查看 anyproxy 日志，请访问 ${chalk.yellow.bold('localhost:8002')}`);
+                spinner.succeed(`启动代理成功，按照下面方式设置代理，然后打开公众号「${chalk.yellow.bold('查看历史文章')}」`);
+                console.log(`  代理ip：${chalk.yellow.bold(address.ip())}，端口号：${chalk.yellow.bold(port)}`);
+                console.log(`  访问 http://localhost:8002，查看代理访问日志`);
                 spinner.start('等待抓取中...');
             })
             .on('anyproxy_home', name => {

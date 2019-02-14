@@ -4,7 +4,6 @@
     "extension": null,
     "generator": "mpspider",
     "title": "MPSpider生成的小书",
-    "plugins": ["autocover"],
     "pluginsConfig": {
         "autocover": {
             "font": {
