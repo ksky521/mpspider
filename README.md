@@ -146,3 +146,7 @@ git clone 源码后，进入文件夹，执行`npm i`
 ![带图文章](./screen_capture/2.jpeg)
 
 ![普通文章](./screen_capture/3.jpeg)
+
+## 给作者加鸡腿
+
+![加鸡腿](./wechat.jpeg)
